@@ -1,0 +1,44 @@
+.root {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4fr 1fr;
+}
+
+.font {
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.container {
+  padding: 1rem;
+  background-color: #202124;
+  color: #ffffff;
+  &__editor {
+    @extend .container;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr;
+    textarea {
+      @extend .font;
+      background: transparent;
+      color: inherit;
+      border: unset;
+      outline: unset;
+      border-radius: 0;
+      resize: none;
+    }
+  }
+  &__terminal {
+    @extend .container;
+  }
+}
+
+.item {
+  &__line {
+    @extend .font;
+    text-align: right;
+    color: #616161;
+    padding-right: 0.5rem;
+  }
+}
