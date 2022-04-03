@@ -1,22 +1,32 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Prism from "prismjs";
 import { useRef, useState } from "react";
 import styles from "../styles/Home.module.scss";
 
-const createPair = (
+const handleTextArea = (
   lineNum: number,
   linesArr: string[],
   textArea: HTMLTextAreaElement
 ) => {
   let lineStr = linesArr[lineNum];
+  let lastByte = lineStr[lineStr.length - 1];
   const textAreaSelection = textArea.selectionStart;
-  if (lineStr[lineStr.length - 1] == "{") {
+
+  if (lastByte == "{") {
     lineStr += "}";
-    linesArr[lineNum] = lineStr;
-    textArea.value = linesArr.join("\n");
-    textArea.selectionStart = textAreaSelection;
-    textArea.selectionEnd = textAreaSelection;
   }
+  if (lastByte == "[") {
+    lineStr += "]";
+  }
+  if (lastByte == "(") {
+    lineStr += ")";
+  }
+
+  linesArr[lineNum] = lineStr;
+  textArea.value = linesArr.join("\n");
+  textArea.selectionStart = textAreaSelection;
+  textArea.selectionEnd = textAreaSelection;
   return textArea;
 };
 
@@ -35,47 +45,28 @@ const readLines = (textArea: HTMLTextAreaElement) => {
 
 const Home: NextPage = () => {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const codeRef = useRef<HTMLTextAreaElement | null>(null);
   const [result, setResult] = useState<any>("waiting for input...");
   const [linesNum, setLinesNum] = useState<number>(1);
   const [lineNum, setLineNum] = useState<number>(1);
 
-  // useEffect(() => {
-  //   const textArea = textAreaRef.current;
-  //   document.body.addEventListener("keydown", (e) => {
-  //     if (textArea) {
-  //       setLinesNum(readLines(textArea).length);
-  //     }
-  //   });
-  //   document.body.addEventListener("keyup", (e) => {
-  //     if (textArea) {
-  //       const linesArr = readLines(textArea);
-  //       const newLineNum = findCurrentLine(textArea);
-  //       console.log({
-  //         dir: textArea.selectionDirection,
-  //         start: textArea.selectionStart,
-  //         end: textArea.selectionEnd,
-  //       });
-  //       setLineNum(newLineNum);
-  //       setLinesNum(linesArr.length);
-  //       textAreaRef.current = createPair(newLineNum, linesArr, textArea);
-  //     }
-  //   });
-  // }, []);
-
   const handleEditor = () => {
     const textArea = textAreaRef.current;
+    const code = codeRef.current;
 
-    if (textArea) {
+    if (code && textArea) {
       const linesArr = readLines(textArea);
       const newLineNum = findCurrentLine(textArea);
-      console.log({
-        dir: textArea.selectionDirection,
-        start: textArea.selectionStart,
-        end: textArea.selectionEnd,
-      });
       setLineNum(newLineNum);
       setLinesNum(linesArr.length);
-      textAreaRef.current = createPair(newLineNum, linesArr, textArea);
+      textAreaRef.current = handleTextArea(newLineNum, linesArr, textArea);
+      const text = Prism.highlight(
+        textAreaRef.current.value,
+        Prism.languages.javascript,
+        "javascript"
+      );
+
+      code.innerHTML = text;
     }
   };
 
@@ -97,14 +88,15 @@ const Home: NextPage = () => {
           ))}
         </div>
         <textarea
+          spellCheck="false"
           ref={textAreaRef}
           onChange={handleEditor}
           name="textarea"
           id="textarea"
         />
       </div>
-      <pre className={styles.container__terminal}>
-        <code>{JSON.stringify(result)}</code>
+      <pre className={styles.container__highlight}>
+        <code ref={codeRef}></code>
       </pre>
     </div>
   );

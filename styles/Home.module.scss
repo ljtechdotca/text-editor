@@ -2,7 +2,8 @@
   height: 100vh;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 4fr 1fr;
+  grid-template-rows: 1fr;
+  position: relative;
 }
 
 .font {
@@ -12,12 +13,13 @@
 
 .container {
   padding: 1rem;
-  background-color: #202124;
   color: #ffffff;
+  font-size: 1rem;
   &__editor {
     @extend .container;
+    background-color: #202124;
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 40px 1fr;
     grid-template-rows: 1fr;
     textarea {
       @extend .font;
@@ -29,14 +31,20 @@
       resize: none;
     }
   }
-  &__terminal {
+  &__highlight {
     @extend .container;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    left: 40px;
+    z-index: 0;
   }
 }
 
 .item {
   &__line {
     @extend .font;
+    user-select: none;
     text-align: right;
     color: #616161;
     padding-right: 0.5rem;
