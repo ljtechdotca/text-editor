@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import styles from "../styles/Home.module.scss";
 
 const createPair = (
@@ -39,28 +39,45 @@ const Home: NextPage = () => {
   const [linesNum, setLinesNum] = useState<number>(1);
   const [lineNum, setLineNum] = useState<number>(1);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   const textArea = textAreaRef.current;
+  //   document.body.addEventListener("keydown", (e) => {
+  //     if (textArea) {
+  //       setLinesNum(readLines(textArea).length);
+  //     }
+  //   });
+  //   document.body.addEventListener("keyup", (e) => {
+  //     if (textArea) {
+  //       const linesArr = readLines(textArea);
+  //       const newLineNum = findCurrentLine(textArea);
+  //       console.log({
+  //         dir: textArea.selectionDirection,
+  //         start: textArea.selectionStart,
+  //         end: textArea.selectionEnd,
+  //       });
+  //       setLineNum(newLineNum);
+  //       setLinesNum(linesArr.length);
+  //       textAreaRef.current = createPair(newLineNum, linesArr, textArea);
+  //     }
+  //   });
+  // }, []);
+
+  const handleEditor = () => {
     const textArea = textAreaRef.current;
-    document.body.addEventListener("keydown", (e) => {
-      if (textArea) {
-        setLinesNum(readLines(textArea).length);
-      }
-    });
-    document.body.addEventListener("keyup", (e) => {
-      if (textArea) {
-        const linesArr = readLines(textArea);
-        const newLineNum = findCurrentLine(textArea);
-        console.log({
-          dir: textArea.selectionDirection,
-          start: textArea.selectionStart,
-          end: textArea.selectionEnd,
-        });
-        setLineNum(newLineNum);
-        setLinesNum(linesArr.length);
-        textAreaRef.current = createPair(newLineNum, linesArr, textArea);
-      }
-    });
-  }, []);
+
+    if (textArea) {
+      const linesArr = readLines(textArea);
+      const newLineNum = findCurrentLine(textArea);
+      console.log({
+        dir: textArea.selectionDirection,
+        start: textArea.selectionStart,
+        end: textArea.selectionEnd,
+      });
+      setLineNum(newLineNum);
+      setLinesNum(linesArr.length);
+      textAreaRef.current = createPair(newLineNum, linesArr, textArea);
+    }
+  };
 
   return (
     <div className={styles.root}>
@@ -79,7 +96,12 @@ const Home: NextPage = () => {
             </div>
           ))}
         </div>
-        <textarea ref={textAreaRef} name="textarea" id="textarea" />
+        <textarea
+          ref={textAreaRef}
+          onChange={handleEditor}
+          name="textarea"
+          id="textarea"
+        />
       </div>
       <pre className={styles.container__terminal}>
         <code>{JSON.stringify(result)}</code>
